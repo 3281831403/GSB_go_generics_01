@@ -1,0 +1,127 @@
+// Copyright 2018 Alex Browne. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+package genericfuncs
+
+func _[T](x T) {
+  var _ T = x
+  var _ []T = []T{x}
+  var _ map[T]T = map[T]T{
+    x: x,
+  }
+  var _ [5]T = [5]T{x, x, x, x, x}
+  var _ chan T = make(chan T)
+  var _ func(T) T = func(y T) T {
+    return y
+  }
+  var _ struct{
+    y T
+  } = struct{
+    y T
+  }{
+    y: x,
+  }
+  var _ *T = &x
+  var _ ***T
+  var _ []map[T]chan T = []map[T]chan T{
+    map[T]chan T{
+      x: make(chan T),
+    },
+  }
+}
+
+func a[T](x T) T {
+  return x
+}
+
+func b[T](x T) []T {
+  return []T{x}
+}
+
+func c[T](x T) map[T]T {
+  return map[T]T{
+    x: x,
+  }
+}
+
+func d[T](x T) [5]T {
+  return [5]T{x, x, x, x, x}
+}
+
+func e[T](x T) chan T {
+  c := make(chan T)
+  c <- x
+  return c
+}
+
+func f[T](x T) func(T) T {
+  return func(y T) T {
+    return y
+  }
+}
+
+func g[T](x T) struct{y T} {
+  return struct{
+    y T
+  }{
+    y: x,
+  }
+}
+
+func h[T](x T) *T {
+  return &x
+}
+
+func i[T](x T) ***T {
+  x0 := &x
+  x1 := &x0
+  return &x1
+}
+
+func j[T](x T) []map[T]chan T {
+  return []map[T]chan T {
+    map[T]chan T{
+      x: make(chan T),
+    },
+  }
+}
+
+func k[T](x T) []T {
+  return []T{}
+}
+
+func l[T, U](x T, y U) map[T]U {
+  return map[T]U{}
+}
+
+func main() {
+  // Return value assignment
+  var _ string = a[string]("")
+  var _ []string = b[string]("")
+  var _ map[string]string = c[string]("")
+  var _ [5]string = d[string]("")
+  var _ chan string = e[string]("")
+  var _ func(string) string = f[string]("")
+  var _ struct{y string} = g[string]("")
+  var _ string = (g[string]("")).y
+  var _ *string = h[string]("")
+  var _ ***string = i[string]("")
+  var _ []map[string]chan string = j[string]("")
+  var _ []string = k[string]("")
+  var _ map[int]string = l[int, string](0, "")
+
+  // Assigning functions as values
+  var _ func(string) string = a[string]
+  var _ func(string) []string = b[string]
+  var _ func(string) map[string]string = c[string]
+  var _ func(string) [5]string = d[string]
+  var _ func(string) chan string = e[string]
+  var _ func(string) func(string) string = f[string]
+  var _ func(string) struct{y string} = g[string]
+  var _ func(string) *string = h[string]
+  var _ func(string) ***string = i[string]
+  var _ func(string) []map[string]chan string = j[string]
+  var _ func(string) []string = k[string]
+  var _ func(int, string) map[int]string = l[int, string]
+}

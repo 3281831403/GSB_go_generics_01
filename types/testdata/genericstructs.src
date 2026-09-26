@@ -1,0 +1,93 @@
+// Copyright 2018 Alex Browne. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+package genericstructs
+
+import "bytes"
+
+type A[T] struct {
+  a T
+  b []T
+  c map[T]T
+  d [5]T
+  e chan T
+  f func(T) T
+  g struct{
+    h T
+  }
+  i *T
+  j ***T
+  k []map[T]chan T
+}
+
+type B[T, U] struct {
+  a map[T]U
+}
+
+func main() {
+  // Variable assignment
+  a := A[string]{}
+  var _ string = a.a
+  var _ []string = a.b
+  var _ map[string]string = a.c
+  var _ [5]string = a.d
+  var _ chan string = a.e
+  var _ func(string) string = a.f
+  var _ struct{h string} = a.g
+  var _ string = a.g.h
+  var _ *string = a.i
+  var _ ***string = a.j
+  var _ []map[string]chan string = a.k
+
+  b := B[int, float64]{}
+  var _ map[int]float64 = b.a
+
+  var _ A[uint] = A[uint]{}
+  var _ B[bool, int8] = B[bool, int8]{}
+  var _ A[bytes.Buffer] = A[bytes.Buffer]{}
+
+  // Struct initialization
+  s := ""
+  var _ = A[string]{
+    a: "",
+    b: []string{""},
+    c: map[string]string{
+      "": "",
+    },
+    d: [5]string{"", "", "", "", ""},
+    e: make(chan string),
+    f: func(string) string { return "" },
+    g: struct{
+      h string
+    }{
+      h: "",
+    },
+    i: &s,
+    k: []map[string]chan string{
+      map[string]chan string{
+        "": make(chan string),
+      },
+    },
+  }
+
+  // Concrete types in type switches
+  var x interface{} = A[int]{}
+	switch x.(type) {
+	case A[int]:
+	case A[string]:
+	}
+
+  // Concrete types in type assertions
+  var y interface{} = A[int]{}
+	_ = y.(A[int])
+	_ = y.(A[string])
+}
+
+// Usage of concrete struct types in function signatures
+func _() A[int] {
+	return A[int]{}
+}
+
+func _(_ A[int]) {
+}
